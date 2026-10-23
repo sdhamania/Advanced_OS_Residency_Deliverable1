@@ -210,7 +210,7 @@ def main():
 
     heading(doc, "Job States and Signal Safety", 2)
     paragraph(doc,
-        "A job is recorded as Running, Stopped, or Done. These are shell-level summaries: Running means the job has not stopped or completed, and may include a process that the kernel currently puts to sleep. A Ctrl-Z stop retains the job and its terminal settings. bg sends SIGCONT to its group; fg restores terminal ownership and saved settings before continuing it. This ordering follows POSIX job-control requirements (IEEE & The Open Group, 2024c). Figure A3 demonstrates the complete sequence, including Ctrl-C termination after fg.")
+        "A job is recorded as Running, Stopped, or Done. These are shell-level summaries: Running means the job has not stopped or completed, and may include a process that the kernel currently puts to sleep. A Ctrl-Z stop retains the job and its terminal settings. bg sends SIGCONT to its group; fg restores terminal ownership and saved settings before continuing it. This ordering follows POSIX job-control requirements (IEEE & The Open Group, 2024c). Figure A3 shows stopping, background continuation, and return to the foreground. Ctrl-C termination is checked separately by the integration tests.")
     paragraph(doc,
         "The SIGCHLD handler writes one byte to a nonblocking self-pipe and preserves errno. The normal input loop polls that pipe alongside standard input, then calls waitpid to update the job table. This avoids C++ stream output and container mutation inside a signal handler, consistent with POSIX signal-safety guidance (IEEE & The Open Group, 2024d). A full pipe already provides a wakeup; the code therefore drains available child statuses rather than assuming one notification equals one child.")
     paragraph(doc,
@@ -223,7 +223,7 @@ def main():
     paragraph(doc,
         "The expanded tests include an idle background completion, 12 successive foreground terminal readers, a reader stopped by SIGTTIN and resumed by fg, and a nested shell initially launched in the background. A dedicated test changes a job's echo setting before stopping it, then verifies that fg restores that setting. These cases distinguish execution correctness from superficial output correctness. Both PID tracking and terminal behavior must agree for a test to pass.")
     paragraph(doc,
-        "Appendix A provides five terminal-session captures with their original text transcripts in the submission. Figure A1 covers file and directory commands, including empty-file output. Figure A2 independently checks a background PID and PGID with ps and terminates that process through kill. Figure A3 demonstrates fg and bg. Figure A4 shows invalid commands and inputs. Figure A5 adds clear, a background built-in, and exit. The PNGs render the recorded PTY output; they are reproducible session evidence rather than photographs of a native Terminal window.")
+        "Appendix A provides six actual macOS Terminal screenshots. Figure A1 shows file operations, input mistakes, and recovery. Figure A2 checks a background PID and PGID with ps and terminates that process through kill. Figure A3 demonstrates fg and bg. Figure A4 shows invalid commands and inputs. Figures A5 and A6 show the screen before and after clear, a background built-in, and exit status 0. Separate automated PTY transcripts are supplemental records from earlier sessions; they are not transcriptions of these screenshots.")
 
     heading(doc, "Performance Findings and Limits", 2)
     paragraph(doc,
@@ -295,43 +295,46 @@ def main():
     heading(doc, "Appendix A")
     heading(doc, "Demonstration Evidence")
     figure(doc, 1, "File and Directory Built-ins", "01_builtins.png",
-           "Recorded PTY output demonstrates pwd, echo, mkdir, cd, touch, ls, cat, rm, and rmdir. The sample text is a prepared fixture. Output continues after cat reads the empty notes.txt file.")
+           "Actual Terminal screenshot showing directory changes, sample-file output, and cleanup. The filename notes.txtls explains the failed cat attempts; the user then removes that file and directory. Empty-file cat behavior is verified by regression tests.")
     page(doc)
     figure(doc, 2, "Background Process Creation and Termination", "02_background_and_kill.png",
            "sleep runs asynchronously. jobs displays its shell state and group ID; ps independently confirms the PID and PGID. The built-in kill sends SIGTERM, and the completed child is reported as Done. PID = process ID; PGID = process-group ID.")
     page(doc)
     figure(doc, 3, "Stop Resume and Foreground Terminal Control", "03_fg_bg_signals.png",
-           "Ctrl-Z stops the same process, bg resumes its group, and fg returns it to the foreground. Ctrl-C then terminates it while the shell remains available for another command.")
+           "Ctrl-Z stops the process, bg resumes its group, and fg returns it to the foreground. A second stop and fg are visible before the prompt returns. This screenshot does not establish Ctrl-C termination; that behavior is verified by the integration tests.")
     page(doc)
     figure(doc, 4, "Invalid Commands and Input Errors", "04_error_handling.png",
-           "The session exercises missing commands and files, invalid directories, a nonempty directory, an invalid PID, unmatched quotes, an unsupported pipe, and a missing argument. The shell remains responsive.")
+           "The session shows a missing command and file, an invalid directory and PID, unmatched quotes, an unsupported pipe, a missing argument, and an unknown job ID. Each error returns control to the prompt.")
     page(doc)
-    figure(doc, 5, "Clear Background Built-in and Shell Exit", "05_clear_and_exit.png",
-           "clear emits its ANSI control sequence, which is omitted from the text rendering. The integration test checks its exact bytes. echo executes in a background child, and exit 0 ends the shell. ANSI = American National Standards Institute.")
+    figure(doc, 5, "Terminal Before Clear", "05_clear_before.png",
+           "The Terminal window retains earlier output, an echo result, and clear typed at the prompt before execution. Figure A6 shows the subsequent screen. The exact ANSI clear sequence is also checked by an integration test.")
+    page(doc)
+    figure(doc, 6, "Terminal After Clear and Successful Shell Exit", "06_clear_and_exit.png",
+           "Earlier output is absent after clear. The session shows echo output, background built-in completion, and exit 0. The parent zsh reports Shell exit status: 0, confirming the custom shell returned successfully.")
 
     page(doc)
     heading(doc, "Appendix B")
     heading(doc, "Command Coverage and Submission Contents")
-    paragraph(doc, "Table B1 maps every required command to implementation behavior and direct verification. The source, Makefile, tests, README, benchmark data, screenshots, and transcripts accompany this report. Build with make, run ./build/os-shell, and verify with make test. GitHub publication is deferred.")
+    paragraph(doc, "Table B1 maps every required command to implementation behavior and direct verification. The source, Makefile, tests, README, benchmark data, native screenshots, and supplemental PTY transcripts accompany this report. Build with make, run ./build/os-shell, and verify with make test. The project repository is https://github.com/sdhamania/Advanced_OS_Residency_Deliverable1.")
     table(doc, "Table B1", "Required Command Coverage",
           ["Command", "Implemented behavior", "Evidence"],
           [["cd [directory]", "Changes parent cwd; no argument uses HOME.", "A1; integration tests"],
            ["pwd", "Prints current directory.", "A1"],
-           ["exit [status]", "Exits shell; validates optional status.", "A5; exit tests"],
-           ["echo [text]", "Prints parsed arguments.", "A1; A5"],
-           ["clear", "Emits ANSI clear and cursor-home codes.", "A5; byte test"],
+           ["exit [status]", "Exits shell; validates optional status.", "A6; exit tests"],
+           ["echo [text]", "Prints parsed arguments.", "A1; A6"],
+           ["clear", "Emits ANSI clear and cursor-home codes.", "A5–A6; byte test"],
            ["ls [path]", "Lists sorted nonhidden entries.", "A1"],
            ["cat file...", "Copies bytes; handles empty files and read errors.", "A1; regression tests"],
            ["mkdir directory...", "Creates directories; reports failures.", "A1; A4"],
-           ["rmdir directory...", "Removes empty directories; rejects symlinks.", "A1; A4; link tests"],
-           ["rm file...", "Removes files or links; refuses directories.", "A1; A4; link tests"],
+           ["rmdir directory...", "Removes empty directories; rejects symlinks.", "A1; link tests"],
+           ["rm file...", "Removes files or links; refuses directories.", "A1; link tests"],
            ["touch file...", "Creates missing files; updates timestamps.", "A1; timestamp test"],
            ["kill pid", "Sends SIGTERM to a validated positive PID.", "A2; A4"],
            ["jobs", "Lists tracked running, stopped, and done jobs.", "A2; A3"],
            ["fg [job_id]", "Restores terminal ownership and resumes/waits.", "A3; terminal tests"],
            ["bg [job_id]", "Resumes the stopped group asynchronously.", "A3"]],
           [1.3, 3.65, 1.55])
-    note(doc, "A1–A5 refer to Figures A1–A5. cwd = current working directory. Both numeric job IDs and percent-prefixed IDs are accepted. With no ID, fg and bg use the most recent active job.")
+    note(doc, "A1–A6 refer to Figures A1–A6. cwd = current working directory. Both numeric job IDs and percent-prefixed IDs are accepted. With no ID, fg and bg use the most recent active job.")
     doc.save(OUTPUT)
     print(OUTPUT)
 

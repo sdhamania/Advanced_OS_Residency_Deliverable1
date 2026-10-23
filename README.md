@@ -77,13 +77,13 @@ The parser reports pipes (`|`), redirection (`<` and `>`), command lists (`;`), 
 
 ## Submission evidence and report
 
-The report uses APA 7 student-paper formatting, six cited primary technical references, a performance table, five figures in Appendix A, and a command coverage matrix in Appendix B. The PNGs in `screenshots/` render recorded PTY transcripts; the matching `.txt` files preserve that evidence. They are not photographs of a native Terminal window. `clear` is demonstrated in a transcript and checked by its exact ANSI bytes in the tests.
+The report uses APA 7 student-paper formatting, six cited primary technical references, a performance table, six figures in Appendix A, and a command coverage matrix in Appendix B. The PNGs in `screenshots/` are actual macOS Terminal screenshots supplied by the author. They preserve input mistakes and recovery. Figures A5 and A6 show the screen before and after `clear`, with background built-in completion and exit status 0. Figure A3 shows stop/resume/foreground behavior; Ctrl-C termination and empty-file `cat` are verified by automated tests. Supplemental text recordings in `evidence/pty_sessions/` come from separate earlier automated PTY sessions and are not transcriptions of the native screenshots.
 
 The reviewed implementation passes parser assertions and 20 integration tests on macOS. The full integration suite also passes under AddressSanitizer and UndefinedBehaviorSanitizer. Clang static analysis reports no findings. Linux source compatibility is intended, but Linux execution has not been verified here.
 
 In batch mode, background commands receive `/dev/null` as standard input so they cannot consume subsequent shell commands. Interactive background jobs retain terminal job-control behavior. Within double quotes, ordinary backslashes remain literal; backslash still escapes a double quote, backslash, dollar sign, or backquote. Full variable expansion and multiline command continuation remain outside this parser's supported subset.
 
-To reproduce the performance measurements after building, run `python3 scripts/benchmark.py`; it saves all nine samples per workload in `report/benchmark_results.json`. To regenerate the evidence images, install Pillow in a local environment and run `python3 scripts/generate_screenshots.py`. Rebuilding the Word report requires `python-docx` and uses `python3 report/build_report.py`. These optional authoring dependencies are not needed to compile or run the shell.
+To reproduce the performance measurements after building, run `python3 scripts/benchmark.py`; it saves all nine samples per workload in `report/benchmark_results.json`. To generate supplemental PTY recordings and rendered previews, install Pillow in a local environment and run `python3 scripts/generate_screenshots.py`; outputs go to `evidence/pty_sessions/` and do not replace the native screenshots. Native screenshots must be recaptured from actual Terminal sessions. Rebuilding the Word report requires `python-docx` and uses `python3 report/build_report.py`. These optional authoring dependencies are not needed to compile or run the shell.
 
 The later project topics—simulated scheduling policies, memory management, synchronization primitives, and expanded security controls—are not included in Deliverable 1.
 
@@ -93,7 +93,8 @@ The later project topics—simulated scheduling policies, memory management, syn
 include/      Public C++ headers and job model
 src/          Parser, shell, built-ins, and entry point
 tests/        Parser, batch-mode, and PTY job-control tests
-screenshots/  Demonstration evidence used by the report
+screenshots/  Actual Terminal screenshots used by the report
+evidence/     Supplemental automated PTY transcripts
 report/       Report builder and final Word report
 ```
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture real PTY shell sessions and render exact transcripts as PNGs."""
+"""Record supplemental PTY sessions without overwriting native screenshots."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 BINARY = ROOT / "build" / "os-shell"
-OUTPUT = ROOT / "screenshots"
+OUTPUT = ROOT / "evidence" / "pty_sessions"
 FONT_PATH = Path("/System/Library/Fonts/Menlo.ttc")
 if not FONT_PATH.exists():
     FONT_PATH = Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf")
