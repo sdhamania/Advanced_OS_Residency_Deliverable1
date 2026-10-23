@@ -1,0 +1,20 @@
+os-shell:/private/tmp/osh-sbpinad2$ pwd
+/private/tmp/osh-sbpinad2
+os-shell:/private/tmp/osh-sbpinad2$ echo "Advanced Shell built-ins"
+Advanced Shell built-ins
+os-shell:/private/tmp/osh-sbpinad2$ mkdir demo
+os-shell:/private/tmp/osh-sbpinad2$ cd demo
+os-shell:/private/tmp/osh-sbpinad2/demo$ touch notes.txt
+os-shell:/private/tmp/osh-sbpinad2/demo$ ls
+notes.txt
+os-shell:/private/tmp/osh-sbpinad2/demo$ cat ../sample.txt
+Process state became concrete during testing.
+os-shell:/private/tmp/osh-sbpinad2/demo$ cat notes.txt
+os-shell:/private/tmp/osh-sbpinad2/demo$ echo "Empty cat did not disable output"
+Empty cat did not disable output
+os-shell:/private/tmp/osh-sbpinad2/demo$ cd ..
+os-shell:/private/tmp/osh-sbpinad2$ rm demo/notes.txt
+os-shell:/private/tmp/osh-sbpinad2$ rmdir demo
+os-shell:/private/tmp/osh-sbpinad2$ ls
+sample.txt
+os-shell:/private/tmp/osh-sbpinad2$

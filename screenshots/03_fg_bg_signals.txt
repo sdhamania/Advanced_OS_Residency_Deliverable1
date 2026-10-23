@@ -1,0 +1,12 @@
+os-shell:/private/tmp/osh-sbpinad2$ sleep 20
+^Z[1] Stopped  sleep 20
+os-shell:/private/tmp/osh-sbpinad2$ jobs
+[1] Stopped  56411  sleep 20
+os-shell:/private/tmp/osh-sbpinad2$ bg %1
+[1] 56411  sleep 20
+os-shell:/private/tmp/osh-sbpinad2$ jobs
+[1] Running  56411  sleep 20
+os-shell:/private/tmp/osh-sbpinad2$ fg %1
+sleep 20
+^CTerminated by signal 2
+os-shell:/private/tmp/osh-sbpinad2$

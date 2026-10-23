@@ -1,0 +1,9 @@
+os-shell:/private/tmp/osh-sbpinad2$ clear
+os-shell:/private/tmp/osh-sbpinad2$ echo "clear returned control to the prompt"
+clear returned control to the prompt
+os-shell:/private/tmp/osh-sbpinad2$ echo background-builtin &
+[1] 56415
+background-builtin
+os-shell:/private/tmp/osh-sbpinad2$ sleep 0.1
+[1] Done  echo background-builtin &
+os-shell:/private/tmp/osh-sbpinad2$ exit 0

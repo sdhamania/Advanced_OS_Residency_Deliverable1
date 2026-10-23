@@ -1,0 +1,21 @@
+os-shell:/private/tmp/osh-sbpinad2$ no_such_command_xyz
+os-shell: no_such_command_xyz: No such file or directory
+os-shell:/private/tmp/osh-sbpinad2$ cat missing.txt
+os-shell: cat: missing.txt: No such file or directory
+os-shell:/private/tmp/osh-sbpinad2$ cd missing-directory
+os-shell: cd: missing-directory: No such file or directory
+os-shell:/private/tmp/osh-sbpinad2$ mkdir occupied
+os-shell:/private/tmp/osh-sbpinad2$ touch occupied/item.txt
+os-shell:/private/tmp/osh-sbpinad2$ rmdir occupied
+os-shell: rmdir: occupied: Directory not empty
+os-shell:/private/tmp/osh-sbpinad2$ rm occupied
+os-shell: rm: occupied: Is a directory
+os-shell:/private/tmp/osh-sbpinad2$ kill abc
+os-shell: kill: PID must be a positive integer
+os-shell:/private/tmp/osh-sbpinad2$ echo "unfinished
+os-shell: unmatched quote
+os-shell:/private/tmp/osh-sbpinad2$ ls | cat
+os-shell: unsupported operator '|' (pipes, redirection, and command lists are outside Deliverable 1)
+os-shell:/private/tmp/osh-sbpinad2$ mkdir
+os-shell: mkdir: expected at least one directory
+os-shell:/private/tmp/osh-sbpinad2$
